@@ -12,135 +12,50 @@
   <body>
     <div class="app-shell">
       <aside class="sidebar" aria-label="主导航">
-        <div class="brand">
-          <div class="brand-mark" aria-hidden="true">苏</div>
-          <div>
-            <p class="eyebrow">SUZHOU DAY TRIP</p>
-            <h1>姑苏一日漫游</h1>
-          </div>
-        </div>
-
+        <div class="brand"><div class="brand-mark" aria-hidden="true">苏</div><div><p class="eyebrow">SUZHOU DAY TRIP</p><h1>姑苏一日漫游</h1></div></div>
         <nav class="nav-list" aria-label="页面切换">
-          <button class="nav-item is-active" data-view="planner" type="button">
-            <span class="nav-icon">⌘</span><span>景点规划图</span>
-          </button>
-          <button class="nav-item" data-view="map" type="button">
-            <span class="nav-icon">◌</span><span>全部景点总览</span>
-          </button>
-          <button class="nav-item" data-view="tips" type="button">
-            <span class="nav-icon">!</span><span>出行提示</span><span class="notice-dot">3</span>
-          </button>
+          <button class="nav-item is-active" data-view="planner" type="button"><i data-lucide="route"></i><span>景点规划图</span></button>
+          <button class="subnav-item" data-view="route" type="button"><i data-lucide="list-checks"></i><span>当前所选路线</span><b id="route-count">0</b></button>
+          <button class="nav-item" data-view="map" type="button"><i data-lucide="map-pinned"></i><span>全部景点总览</span></button>
+          <button class="nav-item" data-view="tips" type="button"><i data-lucide="cloud-rain"></i><span>出行提示</span><b class="notice-dot">3</b></button>
         </nav>
-
-        <section class="side-card" aria-label="行程时间">
-          <p class="side-card-label">8 月 22 日 · 周六</p>
-          <div class="train-times">
-            <div><span>抵达苏州站</span><strong>10:10</strong></div>
-            <div><span>最晚回到车站</span><strong>20:50</strong></div>
-          </div>
-          <p class="side-card-note">主线预计 20:40–20:45 到站</p>
-        </section>
-
-        <div class="sidebar-footer">
-          <span class="pulse-dot"></span> 信息核验于 08-21
-        </div>
+        <section class="side-card" aria-label="行程时间"><p class="side-card-label">8 月 22 日 · 周六</p><div class="train-times"><div><span>抵达苏州站</span><strong>10:10</strong></div><div><span>最晚回到车站</span><strong>20:50</strong></div></div><p id="route-status-side" class="side-card-note">先从苏州站选择第一站</p></section>
+        <div class="sidebar-footer"><span class="pulse-dot"></span>信息核验于 08-21</div>
       </aside>
 
       <main class="main-content">
         <section id="planner-view" class="view is-active" aria-labelledby="planner-title">
-          <header class="view-header">
-            <div>
-              <p class="eyebrow">BRANCHING ITINERARY</p>
-              <h2 id="planner-title">轻松主线，随时切换</h2>
-              <p>点击景点看详情，点击连线查看交通步骤。绿色为当前推荐，金色为可选分支。</p>
-            </div>
-            <div class="header-actions">
-              <button id="rain-mode" class="outline-button" type="button" aria-pressed="false">☂ 雨天 / 少走路</button>
-              <button id="reset-plan" class="text-button" type="button">重置分支</button>
-            </div>
-          </header>
+          <header class="view-header"><div><p class="eyebrow">INTERACTIVE ROUTE BUILDER</p><h2 id="planner-title">按自己的节奏，选下一站</h2><p>绿色连线是已选路线；高亮边是当前可选下一站。先点击边，再确认交通方案。</p></div><div class="header-actions"><button id="rain-mode" class="outline-button" type="button" aria-pressed="false"><i data-lucide="umbrella"></i>雨天 / 少走路</button><button id="undo-route" class="text-button" type="button"><i data-lucide="undo-2"></i>撤销上一站</button><button id="reset-route" class="text-button" type="button">重置</button></div></header>
+          <div id="route-banner" class="route-banner"></div>
+          <div class="graph-wrap"><div id="cy" aria-label="苏州景点分支规划图"></div><div class="graph-legend"><span><b class="legend-circle selected"></b>已选路线</span><span><b class="legend-circle candidate"></b>可选下一站</span><span><b class="legend-circle optional"></b>预约 / 备选</span><span><b class="legend-circle muted"></b>当前不可选</span></div></div>
+          <p class="planner-footnote">路线只允许沿可达边向前选择，并会检查最短回站时间。交通时间是预估值，出发前请以实时导航为准。</p>
+        </section>
 
-          <div class="planner-summary">
-            <div class="summary-route"><span class="summary-dot start"></span>苏州站 <i>→</i> 平江路 <i>→</i> 诚品 <i>→</i> 金鸡湖 <i>→</i> 山塘街 <i>→</i> 苏州站</div>
-            <div class="deadline-chip">硬性回站线 <strong>20:50</strong></div>
-          </div>
-          <div class="graph-wrap">
-            <div id="cy" aria-label="苏州景点分支规划图"></div>
-            <div class="graph-legend" aria-label="图例">
-              <span><b class="legend-circle primary"></b>主线</span>
-              <span><b class="legend-circle optional"></b>可选 / 需预约</span>
-              <span><b class="legend-circle muted"></b>不去 / 雨天弱化</span>
-            </div>
-          </div>
-          <p class="planner-footnote">交通时间为预估值；点击交通边可打开实时地图入口。雨天模式将优先保留室内与直达回站方案。</p>
+        <section id="route-view" class="view" aria-labelledby="route-title">
+          <header class="view-header"><div><p class="eyebrow">YOUR SELECTED ROUTE</p><h2 id="route-title">当前所选路线</h2><p>可查看每段交通、预计到离时间与回站状态；删除某站会一并移除其后的选择。</p></div><button class="outline-button" data-view="planner" type="button"><i data-lucide="mouse-pointer-click"></i>继续选线</button></header>
+          <div id="route-overview" class="route-overview"></div><div id="route-timeline" class="route-timeline"></div>
         </section>
 
         <section id="map-view" class="view" aria-labelledby="map-title">
-          <header class="view-header map-header">
-            <div>
-              <p class="eyebrow">SUZHOU AT A GLANCE</p>
-              <h2 id="map-title">全部景点总览</h2>
-              <p>拖动、缩放地图，点击标记查看景点与当前行程中的位置。</p>
-            </div>
-            <div class="filter-group" role="group" aria-label="地图筛选">
-              <button class="filter-button is-active" data-filter="all" type="button">全部 7 处</button>
-              <button class="filter-button" data-filter="primary" type="button">主线</button>
-              <button class="filter-button" data-filter="optional" type="button">备选 / 预约</button>
-            </div>
-          </header>
-          <div id="map" aria-label="苏州景点地图"></div>
-          <p class="map-note">地图由 OpenStreetMap 提供；若底图加载失败，景点列表和路线图仍可正常使用。</p>
+          <header class="view-header map-header"><div><p class="eyebrow">SUZHOU AT A GLANCE</p><h2 id="map-title">全部景点总览</h2><p>点选地图标记查看攻略；地图详情卡只在本页显示，不会覆盖规划图。</p></div><div class="filter-group" role="group" aria-label="地图筛选"><button class="filter-button is-active" data-filter="all" type="button">全部 7 处</button><button class="filter-button" data-filter="primary" type="button">主线</button><button class="filter-button" data-filter="optional" type="button">备选 / 预约</button></div></header>
+          <div class="map-shell"><div id="map" aria-label="苏州景点地图"></div><aside id="map-detail-card" class="map-detail-card" aria-live="polite"></aside></div><p class="map-note">地图由 OpenStreetMap 提供；标记位置为景点入口或建议停留区域。</p>
         </section>
 
         <section id="tips-view" class="view" aria-labelledby="tips-title">
-          <header class="tips-hero">
-            <div>
-              <p class="eyebrow">TRAVEL BRIEF · 2026.08.22 SAT</p>
-              <h2 id="tips-title">出门前，把这几件事放在心上</h2>
-              <p>以下内容基于 8 月 21 日联网核验。它们是出发建议，不替代当日的实时公告与导航。</p>
-            </div>
-            <div class="weather-badge"><span>☂</span><div><b>中雨风险</b><small>约 26–32°C</small></div></div>
-          </header>
-
+          <header class="tips-hero"><div><p class="eyebrow">TRAVEL BRIEF · 2026.08.22 SAT</p><h2 id="tips-title">出门前，把这几件事放在心上</h2><p>以下内容基于 8 月 21 日联网核验。请以当日实时公告与导航为准。</p></div><div class="weather-badge"><i data-lucide="cloud-rain"></i><div><b>中雨风险</b><small>约 26–32°C</small></div></div></header>
           <div class="alert-strip"><strong>出发前必须确认</strong><span>近期景区曾受台风影响临时调整；平江路、山塘街与金鸡湖户外/水上项目请以当日公告为准。</span></div>
-
           <div class="tips-grid">
-            <article class="tip-card warning">
-              <div class="tip-icon">☂</div><div><p class="tip-label">天气优先</p><h3>把室内段留给雨势</h3><p>诚品书店安排在午后。若雨势变大，跳过金鸡湖，直接转山塘街或回苏州站；带折伞、防水鞋或鞋套。</p><a href="https://www.nmc.cn/publish/forecast/AJS/suzhou.html" target="_blank" rel="noreferrer">查看中央气象台预报 ↗</a></div>
-            </article>
-            <article class="tip-card critical">
-              <div class="tip-icon">!</div><div><p class="tip-label">开放状态</p><h3>游船不纳入主线</h3><p>平江路官方页标示全天开放，但近期街区与游船曾临时暂停。先核验街区开放，再决定是否增加水上项目。</p><a href="https://visitsz.wglj.suzhou.com.cn/news-detail.aspx?id=3032" target="_blank" rel="noreferrer">查看苏州文旅公告 ↗</a></div>
-            </article>
-            <article class="tip-card">
-              <div class="tip-icon">⌁</div><div><p class="tip-label">预约分支</p><h3>无预约就不硬塞</h3><p>拙政园与苏博默认不进入主线。拙政园需实名分时预约；苏博本馆通常 16:00 停止入馆。</p><a href="https://visitsz.wglj.suzhou.com.cn/venue-detail.aspx?Id=37" target="_blank" rel="noreferrer">查看苏博开放说明 ↗</a></div>
-            </article>
-            <article class="tip-card return-card">
-              <div class="tip-icon">↲</div><div><p class="tip-label">回站底线</p><h3>20:25 从山塘街出发</h3><p>优先乘地铁 2 号线（山塘街站→苏州火车站 1 站）；若站外拥堵或降雨，改打车。目标 20:40–20:45 到站，20:50 为硬线。</p><a href="https://www.suzhou.gov.cn/szsrmzf/mszx/202604/568a4eac0636443c968cfc195b9a3e29.shtml" target="_blank" rel="noreferrer">查看官方接驳指引 ↗</a></div>
-            </article>
+            <article class="tip-card warning"><div class="tip-icon"><i data-lucide="umbrella"></i></div><div><p class="tip-label">天气优先</p><h3>把室内段留给雨势</h3><p>诚品书店安排在午后。若雨势变大，跳过金鸡湖，直接转山塘街或苏州站；带折伞、防水鞋或鞋套。</p><a href="https://www.nmc.cn/publish/forecast/AJS/suzhou.html" target="_blank" rel="noreferrer">查看中央气象台预报 ↗</a></div></article>
+            <article class="tip-card critical"><div class="tip-icon"><i data-lucide="circle-alert"></i></div><div><p class="tip-label">开放状态</p><h3>游船不纳入主线</h3><p>平江路官方页标示全天开放，但近期街区与游船曾临时暂停。先核验街区开放，再决定是否增加水上项目。</p><a href="https://visitsz.wglj.suzhou.com.cn/news-detail.aspx?id=3032" target="_blank" rel="noreferrer">查看苏州文旅公告 ↗</a></div></article>
+            <article class="tip-card"><div class="tip-icon"><i data-lucide="ticket-check"></i></div><div><p class="tip-label">预约分支</p><h3>无预约就不硬塞</h3><p>拙政园与苏博默认不进入主线。拙政园需实名分时预约；苏博本馆通常 16:00 停止入馆。</p><a href="https://visitsz.wglj.suzhou.com.cn/venue-detail.aspx?Id=37" target="_blank" rel="noreferrer">查看苏博开放说明 ↗</a></div></article>
+            <article class="tip-card return-card"><div class="tip-icon"><i data-lucide="train-front"></i></div><div><p class="tip-label">回站底线</p><h3>20:25 从山塘街出发</h3><p>优先乘地铁 2 号线（山塘街站→苏州火车站 1 站）；若站外拥堵或降雨，改打车。目标 20:40–20:45 到站。</p><a href="https://www.suzhou.gov.cn/szsrmzf/mszx/202604/568a4eac0636443c968cfc195b9a3e29.shtml" target="_blank" rel="noreferrer">查看官方接驳指引 ↗</a></div></article>
           </div>
-
-          <section class="checklist-section" aria-labelledby="checklist-title">
-            <div><p class="eyebrow">THREE QUICK CHECKS</p><h3 id="checklist-title">出发前 3 项核验</h3></div>
-            <div id="checklist" class="checklist"></div>
-          </section>
-          <p class="tips-footnote">另请携带充电宝与舒适防滑鞋；雨天石板路湿滑，勿在河边湿滑边缘停留或拍照。客流提醒仅用于风险预留，并非当日预测。</p>
+          <section class="checklist-section" aria-labelledby="checklist-title"><div><p class="eyebrow">THREE QUICK CHECKS</p><h3 id="checklist-title">出发前 3 项核验</h3></div><div id="checklist" class="checklist"></div></section><p class="tips-footnote">另请携带充电宝与舒适防滑鞋；雨天石板路湿滑，勿在河边湿滑边缘停留或拍照。</p>
         </section>
       </main>
     </div>
-
-    <aside id="detail-drawer" class="drawer" aria-live="polite" aria-label="景点详情">
-      <button id="close-drawer" class="close-button" type="button" aria-label="关闭景点详情">×</button>
-      <div id="drawer-content"></div>
-    </aside>
-    <div id="drawer-scrim" class="scrim"></div>
-
-    <dialog id="transport-modal" class="transport-modal" aria-labelledby="transport-title">
-      <button id="close-modal" class="close-button" type="button" aria-label="关闭交通详情">×</button>
-      <div id="modal-content"></div>
-    </dialog>
-
-    <script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    <script src="app.js"></script>
+    <aside id="detail-drawer" class="drawer" aria-live="polite" aria-label="景点旅行攻略"><button id="close-drawer" class="close-button" type="button" aria-label="关闭景点攻略"><i data-lucide="x"></i></button><div id="drawer-content"></div></aside><div id="drawer-scrim" class="scrim"></div>
+    <dialog id="transport-modal" class="transport-modal" aria-labelledby="transport-title"><button id="close-modal" class="close-button" type="button" aria-label="关闭交通方案"><i data-lucide="x"></i></button><div id="modal-content"></div></dialog>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script><script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script><script src="app.js"></script>
   </body>
 </html>
